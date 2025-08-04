@@ -530,6 +530,7 @@
         async function setupGitHub() {
             console.log('setupGitHub called');
             
+            const connectBtn = document.getElementById('connect-btn');
             const username = document.getElementById('github-username').value.trim();
             const repo = document.getElementById('github-repo').value.trim();
             const token = document.getElementById('github-token').value.trim();
@@ -546,6 +547,10 @@
             
             console.log('All fields provided, proceeding...');
             
+            // Disable button and show loading state
+            connectBtn.disabled = true;
+            connectBtn.textContent = 'Connecting...';
+            
             githubConfig = { username, repo, token };
             sessionStorage.setItem('githubConfig', JSON.stringify(githubConfig));
             
@@ -560,16 +565,24 @@
                 console.log('About to call loadWorkoutData...');
                 console.log('Current githubConfig username:', githubConfig.username);
                 console.log('Current githubConfig repo:', githubConfig.repo);
-                await loadWorkoutData();
+                await loadWorkoutData(true); // Pass flag to prevent auto-navigation
                 console.log('loadWorkoutData completed successfully');
                 showStatus('setup-status', 'Connected successfully!', 'success');
                 
-                // loadWorkoutData() already calls showWorkoutSelection(), so no need to call it again
+                // Brief delay to show success message, then navigate
+                setTimeout(() => {
+                    showWorkoutSelection();
+                }, 800);
+                
             } catch (error) {
                 console.error('loadWorkoutData failed:', error);
                 console.error('Error details:', error.message);
                 console.error('Error stack:', error.stack);
                 showStatus('setup-status', `Connection failed: ${error.message}`, 'error');
+                
+                // Re-enable button on error
+                connectBtn.disabled = false;
+                connectBtn.textContent = 'Connect to GitHub';
             }
         }
         
@@ -1034,7 +1047,11 @@
                 
                 displayWorkoutOptions();
                 displayLastWorkout();
-                showWorkoutSelection();
+                
+                // Only auto-show workout selection if not being called from setupGitHub
+                if (!arguments[0]) {
+                    showWorkoutSelection();
+                }
                 
             } catch (error) {
                 console.error('Full error:', error);
