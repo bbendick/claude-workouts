@@ -1054,10 +1054,61 @@
                 return;
             }
             
-            // In production, save to GitHub (workouts.json only - no sessions)
-            // This function now only saves workout definitions, not session history
+            // In production, save to GitHub (workouts.json)
             console.log('Saving workout definitions to GitHub...');
-            // Note: GitHub API save implementation would go here
+            
+            try {
+                const content = btoa(JSON.stringify(workoutData, null, 2));
+                const url = `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/workouts.json`;
+                
+                // First, get the current file to get its SHA (required for updates)
+                let sha = null;
+                try {
+                    const currentResponse = await fetch(url, {
+                        headers: {
+                            'Authorization': `token ${githubConfig.token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    
+                    if (currentResponse.ok) {
+                        const currentData = await currentResponse.json();
+                        sha = currentData.sha;
+                    }
+                } catch (e) {
+                    // File doesn't exist yet, that's ok
+                }
+                
+                // Now save the file
+                const body = {
+                    message: `Initialize workout data: ${new Date().toISOString()}`,
+                    content: content
+                };
+                
+                if (sha) {
+                    body.sha = sha; // Required for updates
+                }
+                
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+                }
+                
+                console.log('Workout data saved to GitHub successfully');
+                
+            } catch (error) {
+                console.error('Failed to save workout data to GitHub:', error);
+                throw new Error(`Failed to save workout data: ${error.message}`);
+            }
         }
         
         async function saveCompletedWorkouts() {
