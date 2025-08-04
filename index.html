@@ -212,7 +212,19 @@
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .current-exercise-left {
+            flex: 1;
+        }
+        
+        .current-exercise-right {
+            flex: 0 0 auto;
+            text-align: right;
+            margin-left: 20px;
         }
         
         .exercise-name {
@@ -223,9 +235,8 @@
         }
         
         .exercise-weight {
-            font-size: 1.5rem;
+            font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 10px;
             color: #ff9800;
         }
         
@@ -421,17 +432,21 @@
                 ← Back to Exercises
             </button>
             <div class="current-exercise">
-                <div class="exercise-name" id="current-exercise-name"></div>
-                <div class="exercise-weight" id="current-exercise-weight"></div>
-                <div class="exercise-info" id="current-exercise-info"></div>
-                
-                <div class="sets-progress">
-                    <div class="set-info" id="set-info"></div>
+                <div class="current-exercise-left">
+                    <div class="exercise-name" id="current-exercise-name"></div>
+                    <div class="exercise-info" id="current-exercise-info"></div>
+                    <div class="sets-progress">
+                        <div class="set-info" id="set-info"></div>
+                    </div>
                 </div>
+                <div class="current-exercise-right">
+                    <div class="exercise-weight" id="current-exercise-weight"></div>
+                </div>
+            </div>
                 
                 <div class="set-controls" id="set-controls">
                     <button class="btn complete-set-btn" id="complete-set-btn" onclick="completeSet()">
-                        Complete Set 1
+                        Mark Set 1 Done
                     </button>
                 </div>
                 
@@ -722,34 +737,34 @@
                         "day1-upper": {
                             "name": "Day 1: Full Body Emphasis on Upper Body",
                             "exercises": [
-                                {"name": "Chest Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 85, "restTime": 60},
-                                {"name": "Seated Row (machine)", "sets": 2, "targetReps": 12, "currentWeight": 70, "restTime": 60},
-                                {"name": "Shoulder Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 45, "restTime": 60},
-                                {"name": "Leg Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 180, "restTime": 60},
-                                {"name": "Plank", "sets": 2, "targetReps": 1, "duration": 30, "restTime": 60},
-                                {"name": "Standing Cable Rotations", "sets": 2, "targetReps": 10, "currentWeight": 25, "restTime": 60}
+                                {"name": "Chest Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 85, "restTime": 60},
+                                {"name": "Seated Row (machine)", "sets": 3, "targetReps": 15, "currentWeight": 70, "restTime": 60},
+                                {"name": "Shoulder Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 45, "restTime": 60},
+                                {"name": "Leg Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 180, "restTime": 60},
+                                {"name": "Plank", "sets": 3, "targetReps": 1, "duration": 30, "restTime": 60},
+                                {"name": "Standing Cable Rotations", "sets": 3, "targetReps": 15, "currentWeight": 25, "restTime": 60}
                             ]
                         },
                         "day2-lower": {
                             "name": "Day 2: Full Body Emphasis on Lower Body",
                             "exercises": [
-                                {"name": "Leg Extensions (machine)", "sets": 2, "targetReps": 12, "currentWeight": 60, "restTime": 60},
-                                {"name": "Leg Curls (machine)", "sets": 2, "targetReps": 12, "currentWeight": 55, "restTime": 60},
-                                {"name": "Lat Pulldown (machine)", "sets": 2, "targetReps": 12, "currentWeight": 75, "restTime": 60},
-                                {"name": "Cable Tricep Pushdown", "sets": 2, "targetReps": 12, "currentWeight": 40, "restTime": 60},
-                                {"name": "Seated Back Extension", "sets": 2, "targetReps": 12, "currentWeight": 35, "restTime": 60},
-                                {"name": "Wall Sit", "sets": 2, "targetReps": 1, "duration": 30, "restTime": 60}
+                                {"name": "Leg Extensions (machine)", "sets": 3, "targetReps": 15, "currentWeight": 60, "restTime": 60},
+                                {"name": "Leg Curls (machine)", "sets": 3, "targetReps": 15, "currentWeight": 55, "restTime": 60},
+                                {"name": "Lat Pulldown (machine)", "sets": 3, "targetReps": 15, "currentWeight": 75, "restTime": 60},
+                                {"name": "Cable Tricep Pushdown", "sets": 3, "targetReps": 15, "currentWeight": 40, "restTime": 60},
+                                {"name": "Seated Back Extension", "sets": 3, "targetReps": 15, "currentWeight": 35, "restTime": 60},
+                                {"name": "Wall Sit", "sets": 3, "targetReps": 1, "duration": 30, "restTime": 60}
                             ]
                         },
                         "day3-balance": {
                             "name": "Day 3: Full Body Balance",
                             "exercises": [
-                                {"name": "Chest Fly (machine)", "sets": 2, "targetReps": 12, "currentWeight": 50, "restTime": 60},
-                                {"name": "Cable Face Pull", "sets": 2, "targetReps": 12, "currentWeight": 30, "restTime": 60},
-                                {"name": "Lateral Raise (machine or light dumbbells)", "sets": 2, "targetReps": 12, "currentWeight": 15, "restTime": 60},
-                                {"name": "Seated Leg Adduction/Abduction", "sets": 2, "targetReps": 12, "currentWeight": 45, "restTime": 60},
-                                {"name": "Standing Cable Rotations", "sets": 2, "targetReps": 10, "currentWeight": 25, "restTime": 60},
-                                {"name": "Assisted Pull-ups (machine)", "sets": 2, "targetReps": 8, "currentWeight": 80, "restTime": 60}
+                                {"name": "Chest Fly (machine)", "sets": 3, "targetReps": 15, "currentWeight": 50, "restTime": 60},
+                                {"name": "Cable Face Pull", "sets": 3, "targetReps": 15, "currentWeight": 30, "restTime": 60},
+                                {"name": "Lateral Raise (machine or light dumbbells)", "sets": 3, "targetReps": 15, "currentWeight": 15, "restTime": 60},
+                                {"name": "Seated Leg Adduction/Abduction", "sets": 3, "targetReps": 15, "currentWeight": 45, "restTime": 60},
+                                {"name": "Standing Cable Rotations", "sets": 3, "targetReps": 15, "currentWeight": 25, "restTime": 60},
+                                {"name": "Assisted Pull-ups (machine)", "sets": 3, "targetReps": 15, "currentWeight": 80, "restTime": 60}
                             ]
                         }
                     }
@@ -764,8 +779,9 @@
                                 {
                                     "name": "Chest Press (machine)",
                                     "sets": [
-                                        {"reps": 12, "weight": 85},
-                                        {"reps": 10, "weight": 85}
+                                        {"reps": 15, "weight": 85},
+                                        {"reps": 15, "weight": 85},
+                                        {"reps": 15, "weight": 85}
                                     ]
                                 }
                             ]
@@ -808,34 +824,34 @@
                                 "upper-body": {
                                     "name": "Upper Body Emphasis",
                                     "exercises": [
-                                        {"name": "Chest Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Seated Row (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Shoulder Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Leg Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Plank", "sets": 2, "targetReps": 1, "duration": 30, "restTime": 60},
-                                        {"name": "Standing Cable Rotations", "sets": 2, "targetReps": 10, "currentWeight": 0, "restTime": 60}
+                                        {"name": "Chest Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Seated Row (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Shoulder Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Leg Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Plank", "sets": 3, "targetReps": 1, "duration": 30, "restTime": 60},
+                                        {"name": "Standing Cable Rotations", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60}
                                     ]
                                 },
                                 "lower-body": {
                                     "name": "Lower Body Emphasis",
                                     "exercises": [
-                                        {"name": "Leg Extensions (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Leg Curls (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Lat Pulldown (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Cable Tricep Pushdown", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Seated Back Extension", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Wall Sit", "sets": 2, "targetReps": 1, "duration": 30, "restTime": 60}
+                                        {"name": "Leg Extensions (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Leg Curls (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Lat Pulldown (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Cable Tricep Pushdown", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Seated Back Extension", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Wall Sit", "sets": 3, "targetReps": 1, "duration": 30, "restTime": 60}
                                     ]
                                 },
                                 "balance": {
                                     "name": "Full Body Balance",
                                     "exercises": [
-                                        {"name": "Chest Fly (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Cable Face Pull", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Lateral Raise", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Seated Leg Adduction/Abduction", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Standing Cable Rotations", "sets": 2, "targetReps": 10, "currentWeight": 0, "restTime": 60},
-                                        {"name": "Assisted Pull-ups", "sets": 2, "targetReps": 8, "currentWeight": 0, "restTime": 60}
+                                        {"name": "Chest Fly (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Cable Face Pull", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Lateral Raise", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Seated Leg Adduction/Abduction", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Standing Cable Rotations", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                                        {"name": "Assisted Pull-ups", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60}
                                     ]
                                 }
                             }
@@ -1081,10 +1097,17 @@
             }
             
             document.getElementById('current-exercise-info').textContent = info;
-            document.getElementById('set-info').textContent = `Ready to start set`;
+            document.getElementById('set-info').textContent = ``;
             
-            // Update complete set button text
-            document.getElementById('complete-set-btn').textContent = `Complete Set ${currentSet + 1}`;
+            // Update button text based on exercise type
+            const completeSetBtn = document.getElementById('complete-set-btn');
+            if (exercise.duration) {
+                completeSetBtn.textContent = `Start Set ${currentSet + 1}`;
+                completeSetBtn.onclick = () => startTimedSet();
+            } else {
+                completeSetBtn.textContent = `Mark Set ${currentSet + 1} Done`;
+                completeSetBtn.onclick = () => completeSet();
+            }
             
             // Hide all control buttons initially
             document.getElementById('next-set-btn').style.display = 'none';
@@ -1095,6 +1118,17 @@
             document.getElementById('set-controls').style.display = 'block';
             
             stopTimer();
+        }
+        
+        function startTimedSet() {
+            const workout = workoutData.workouts[currentSession.workoutId];
+            const exercise = workout.exercises[currentExerciseIndex];
+            
+            // Hide the start button
+            document.getElementById('set-controls').style.display = 'none';
+            
+            // Start the exercise timer (countdown)
+            startExerciseTimer(exercise.duration);
         }
         
         function completeSet() {
@@ -1205,13 +1239,25 @@
                 if (timerSeconds <= 0) {
                     stopTimer();
                     if (isExercise) {
-                        // Exercise timer finished, mark rep as complete and start rest timer
-                        const workout = workoutData.workouts[currentSession.workoutId];
-                        const exercise = workout.exercises[currentExerciseIndex];
-                        startRestTimer(exercise.restTime);
+                        // Exercise timer finished, show complete set button
+                        onExerciseTimerComplete();
                     }
                 }
             }, 1000);
+        }
+        
+        function onExerciseTimerComplete() {
+            const workout = workoutData.workouts[currentSession.workoutId];
+            const exercise = workout.exercises[currentExerciseIndex];
+            
+            // Show the complete set button
+            const completeSetBtn = document.getElementById('complete-set-btn');
+            completeSetBtn.textContent = `Mark Set ${currentSet + 1} Done`;
+            completeSetBtn.onclick = () => completeSet();
+            document.getElementById('set-controls').style.display = 'block';
+            
+            // Update status text
+            document.getElementById('set-info').textContent = `Set complete! Click to finish`;
         }
         
         function updateTimerDisplay() {
@@ -1240,34 +1286,34 @@
                     "day1-upper": {
                         "name": "Day 1: Full Body Emphasis on Upper Body",
                         "exercises": [
-                            {"name": "Chest Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Seated Row (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Shoulder Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Leg Press (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Plank", "sets": 2, "targetReps": 1, "duration": 30, "restTime": 60},
-                            {"name": "Standing Cable Rotations", "sets": 2, "targetReps": 10, "currentWeight": 0, "restTime": 60}
+                            {"name": "Chest Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Seated Row (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Shoulder Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Leg Press (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Plank", "sets": 3, "targetReps": 1, "duration": 30, "restTime": 60},
+                            {"name": "Standing Cable Rotations", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60}
                         ]
                     },
                     "day2-lower": {
                         "name": "Day 2: Full Body Emphasis on Lower Body",
                         "exercises": [
-                            {"name": "Leg Extensions (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Leg Curls (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Lat Pulldown (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Cable Tricep Pushdown", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Seated Back Extension", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Wall Sit", "sets": 2, "targetReps": 1, "duration": 30, "restTime": 60}
+                            {"name": "Leg Extensions (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Leg Curls (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Lat Pulldown (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Cable Tricep Pushdown", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Seated Back Extension", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Wall Sit", "sets": 3, "targetReps": 1, "duration": 30, "restTime": 60}
                         ]
                     },
                     "day3-balance": {
                         "name": "Day 3: Full Body Balance",
                         "exercises": [
-                            {"name": "Chest Fly (machine)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Cable Face Pull", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Lateral Raise (machine or light dumbbells)", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Seated Leg Adduction/Abduction", "sets": 2, "targetReps": 12, "currentWeight": 0, "restTime": 60},
-                            {"name": "Standing Cable Rotations", "sets": 2, "targetReps": 10, "currentWeight": 0, "restTime": 60},
-                            {"name": "Assisted Pull-ups (machine)", "sets": 2, "targetReps": 8, "currentWeight": 0, "restTime": 60}
+                            {"name": "Chest Fly (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Cable Face Pull", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Lateral Raise (machine or light dumbbells)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Seated Leg Adduction/Abduction", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Standing Cable Rotations", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60},
+                            {"name": "Assisted Pull-ups (machine)", "sets": 3, "targetReps": 15, "currentWeight": 0, "restTime": 60}
                         ]
                     }
                 }
