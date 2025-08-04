@@ -516,6 +516,18 @@
             loadGitHubConfig();
         };
         
+        // Show status messages in the setup screen
+        function showStatus(elementId, message, type) {
+            console.log(`showStatus: ${type} - ${message}`);
+            const statusElement = document.getElementById(elementId);
+            if (!statusElement) {
+                console.error(`Status element not found: ${elementId}`);
+                return;
+            }
+            
+            statusElement.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+        
         function loadGitHubConfig() {
             const saved = JSON.parse(sessionStorage.getItem('githubConfig') || '{}');
             
@@ -571,13 +583,17 @@
                 
                 // Brief delay to show success message, then navigate
                 setTimeout(() => {
+                    console.log('Navigating to workout selection...');
                     showWorkoutSelection();
                 }, 800);
                 
             } catch (error) {
+                console.error('=== CONNECTION ERROR ===');
                 console.error('loadWorkoutData failed:', error);
                 console.error('Error details:', error.message);
                 console.error('Error stack:', error.stack);
+                console.error('========================');
+                
                 showStatus('setup-status', `Connection failed: ${error.message}`, 'error');
                 
                 // Re-enable button on error
@@ -1050,7 +1066,10 @@
                 
                 // Only auto-show workout selection if not being called from setupGitHub
                 if (!arguments[0]) {
+                    console.log('Auto-showing workout selection from loadWorkoutData');
                     showWorkoutSelection();
+                } else {
+                    console.log('Skipping auto-navigation, controlled by setupGitHub');
                 }
                 
             } catch (error) {
