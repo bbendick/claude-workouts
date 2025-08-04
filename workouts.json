@@ -1,0 +1,146 @@
+{
+  "workouts": {
+    "day1-upper": {
+      "name": "Day 1: Full Body Emphasis on Upper Body",
+      "exercises": [
+        {
+          "name": "Chest Press (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Seated Row (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Shoulder Press (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Leg Press (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Plank",
+          "sets": 2,
+          "targetReps": 1,
+          "duration": 30,
+          "restTime": 60
+        },
+        {
+          "name": "Standing Cable Rotations",
+          "sets": 2,
+          "targetReps": 10,
+          "currentWeight": 0,
+          "restTime": 60
+        }
+      ]
+    },
+    "day2-lower": {
+      "name": "Day 2: Full Body Emphasis on Lower Body",
+      "exercises": [
+        {
+          "name": "Leg Extensions (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Leg Curls (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Lat Pulldown (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Cable Tricep Pushdown",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Seated Back Extension",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Wall Sit",
+          "sets": 2,
+          "targetReps": 1,
+          "duration": 30,
+          "restTime": 60
+        }
+      ]
+    },
+    "day3-balance": {
+      "name": "Day 3: Full Body Balance",
+      "exercises": [
+        {
+          "name": "Chest Fly (machine)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Cable Face Pull",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Lateral Raise (machine or light dumbbells)",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Seated Leg Adduction/Abduction",
+          "sets": 2,
+          "targetReps": 12,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Standing Cable Rotations",
+          "sets": 2,
+          "targetReps": 10,
+          "currentWeight": 0,
+          "restTime": 60
+        },
+        {
+          "name": "Assisted Pull-ups (machine)",
+          "sets": 2,
+          "targetReps": 8,
+          "currentWeight": 0,
+          "restTime": 60
+        }
+      ]
+    }
+  },
+  "sessions": []
+}
