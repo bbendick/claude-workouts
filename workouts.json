@@ -1,49 +1,243 @@
 {
+  "exercises": {
+    "chest-press": {
+      "id": "chest-press",
+      "name": "Chest Press (machine)",
+      "type": "strength",
+      "muscleGroups": ["chest", "triceps", "shoulders"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "seated-row": {
+      "id": "seated-row",
+      "name": "Seated Row (machine)",
+      "type": "strength",
+      "muscleGroups": ["back", "biceps"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "shoulder-press": {
+      "id": "shoulder-press",
+      "name": "Shoulder Press (machine)",
+      "type": "strength",
+      "muscleGroups": ["shoulders", "triceps"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "leg-press": {
+      "id": "leg-press",
+      "name": "Leg Press (machine)",
+      "type": "strength",
+      "muscleGroups": ["quads", "glutes", "hamstrings"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "plank": {
+      "id": "plank",
+      "name": "Plank",
+      "type": "isometric",
+      "muscleGroups": ["core", "shoulders"],
+      "equipment": "bodyweight",
+      "defaultSets": 2,
+      "defaultTargetReps": 1,
+      "defaultDuration": 30,
+      "defaultRestTime": 60,
+      "notes": ""
+    },
+    "standing-cable-rotations": {
+      "id": "standing-cable-rotations",
+      "name": "Standing Cable Rotations",
+      "type": "strength",
+      "muscleGroups": ["core", "shoulders"],
+      "equipment": "cable",
+      "defaultSets": 2,
+      "defaultTargetReps": 10,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": "Focus on controlled rotation"
+    },
+    "leg-extensions": {
+      "id": "leg-extensions",
+      "name": "Leg Extensions (machine)",
+      "type": "strength",
+      "muscleGroups": ["quads"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "leg-curls": {
+      "id": "leg-curls",
+      "name": "Leg Curls (machine)",
+      "type": "strength",
+      "muscleGroups": ["hamstrings"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "lat-pulldown": {
+      "id": "lat-pulldown",
+      "name": "Lat Pulldown (machine)",
+      "type": "strength",
+      "muscleGroups": ["back", "biceps"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "cable-tricep-pushdown": {
+      "id": "cable-tricep-pushdown",
+      "name": "Cable Tricep Pushdown",
+      "type": "strength",
+      "muscleGroups": ["triceps"],
+      "equipment": "cable",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "seated-back-extension": {
+      "id": "seated-back-extension",
+      "name": "Seated Back Extension",
+      "type": "strength",
+      "muscleGroups": ["lower-back"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "wall-sit": {
+      "id": "wall-sit",
+      "name": "Wall Sit",
+      "type": "isometric",
+      "muscleGroups": ["quads", "glutes"],
+      "equipment": "bodyweight",
+      "defaultSets": 2,
+      "defaultTargetReps": 1,
+      "defaultDuration": 30,
+      "defaultRestTime": 60,
+      "notes": ""
+    },
+    "chest-fly": {
+      "id": "chest-fly",
+      "name": "Chest Fly (machine)",
+      "type": "strength",
+      "muscleGroups": ["chest"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "cable-face-pull": {
+      "id": "cable-face-pull",
+      "name": "Cable Face Pull",
+      "type": "strength",
+      "muscleGroups": ["rear-delts", "upper-back"],
+      "equipment": "cable",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "lateral-raise": {
+      "id": "lateral-raise",
+      "name": "Lateral Raise (machine or light dumbbells)",
+      "type": "strength",
+      "muscleGroups": ["side-delts"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "seated-leg-adduction-abduction": {
+      "id": "seated-leg-adduction-abduction",
+      "name": "Seated Leg Adduction/Abduction",
+      "type": "strength",
+      "muscleGroups": ["hip-adductors", "hip-abductors"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 12,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    },
+    "assisted-pull-ups": {
+      "id": "assisted-pull-ups",
+      "name": "Assisted Pull-ups (machine)",
+      "type": "strength",
+      "muscleGroups": ["back", "biceps"],
+      "equipment": "machine",
+      "defaultSets": 2,
+      "defaultTargetReps": 8,
+      "defaultRestTime": 60,
+      "currentWeight": 0,
+      "notes": ""
+    }
+  },
   "workouts": {
     "day1-upper": {
       "name": "Day 1: Full Body Emphasis on Upper Body",
       "exercises": [
         {
-          "name": "Chest Press (machine)",
+          "exerciseId": "chest-press",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Seated Row (machine)",
+          "exerciseId": "seated-row",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Shoulder Press (machine)",
+          "exerciseId": "shoulder-press",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Leg Press (machine)",
+          "exerciseId": "leg-press",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Plank",
+          "exerciseId": "plank",
           "sets": 2,
-          "targetReps": 1,
-          "duration": 30,
-          "restTime": 60
+          "targetReps": 1
         },
         {
-          "name": "Standing Cable Rotations",
+          "exerciseId": "standing-cable-rotations",
           "sets": 2,
-          "targetReps": 10,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 10
         }
       ]
     },
@@ -51,46 +245,34 @@
       "name": "Day 2: Full Body Emphasis on Lower Body",
       "exercises": [
         {
-          "name": "Leg Extensions (machine)",
+          "exerciseId": "leg-extensions",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Leg Curls (machine)",
+          "exerciseId": "leg-curls",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Lat Pulldown (machine)",
+          "exerciseId": "lat-pulldown",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Cable Tricep Pushdown",
+          "exerciseId": "cable-tricep-pushdown",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Seated Back Extension",
+          "exerciseId": "seated-back-extension",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Wall Sit",
+          "exerciseId": "wall-sit",
           "sets": 2,
-          "targetReps": 1,
-          "duration": 30,
-          "restTime": 60
+          "targetReps": 1
         }
       ]
     },
@@ -98,46 +280,34 @@
       "name": "Day 3: Full Body Balance",
       "exercises": [
         {
-          "name": "Chest Fly (machine)",
+          "exerciseId": "chest-fly",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Cable Face Pull",
+          "exerciseId": "cable-face-pull",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Lateral Raise (machine or light dumbbells)",
+          "exerciseId": "lateral-raise",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Seated Leg Adduction/Abduction",
+          "exerciseId": "seated-leg-adduction-abduction",
           "sets": 2,
-          "targetReps": 12,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 12
         },
         {
-          "name": "Standing Cable Rotations",
+          "exerciseId": "standing-cable-rotations",
           "sets": 2,
-          "targetReps": 10,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 10
         },
         {
-          "name": "Assisted Pull-ups (machine)",
+          "exerciseId": "assisted-pull-ups",
           "sets": 2,
-          "targetReps": 8,
-          "currentWeight": 0,
-          "restTime": 60
+          "targetReps": 8
         }
       ]
     }
