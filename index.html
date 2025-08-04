@@ -929,7 +929,59 @@
             
             // In production, save to GitHub (workouts-completed.json)
             console.log('Saving completed workouts to GitHub...');
-            // Note: GitHub API save implementation would go here
+            
+            try {
+                const content = btoa(JSON.stringify(completedWorkouts, null, 2));
+                const url = `https://api.github.com/repos/${githubConfig.username}/${githubConfig.repo}/contents/workouts-completed.json`;
+                
+                // First, get the current file to get its SHA (required for updates)
+                let sha = null;
+                try {
+                    const currentResponse = await fetch(url, {
+                        headers: {
+                            'Authorization': `token ${githubConfig.token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    
+                    if (currentResponse.ok) {
+                        const currentData = await currentResponse.json();
+                        sha = currentData.sha;
+                    }
+                } catch (e) {
+                    // File doesn't exist yet, that's ok
+                }
+                
+                // Now save the file
+                const body = {
+                    message: `Update workout progress: ${new Date().toISOString()}`,
+                    content: content
+                };
+                
+                if (sha) {
+                    body.sha = sha; // Required for updates
+                }
+                
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${githubConfig.token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+                }
+                
+                console.log('Completed workouts saved to GitHub successfully');
+                
+            } catch (error) {
+                console.error('Failed to save to GitHub:', error);
+                throw new Error(`Failed to save progress: ${error.message}`);
+            }
         }
         
         function addExportButton() {
