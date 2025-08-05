@@ -1,6 +1,6 @@
 # 💪 Claude Workouts - Gym Tracker App
 
-A mobile-first web application for tracking gym workouts with GitHub integration for data persistence. Built for real gym use with large touch controls, automatic timers, and offline-first design.
+A mobile-first web application for tracking gym workouts with GitHub integration for data persistence. Built for real gym use with large touch controls, automatic timers, and offline-first design. You can use this version as is, paired with your own workout data (see **Data Repository**), at https://bbendick.github.io/claude-workouts/.
 
 ## Features
 
