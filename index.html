@@ -1099,7 +1099,7 @@
                     if (workoutsResponse.status === 404) {
                         console.log('workouts.json not found, will be created from existing file...');
                         // Will use the workouts.json structure from the repo
-                        await saveWorkoutData();
+                        await saveWorkoutDefinitions();
                     } else {
                         throw new Error(`Failed to load workouts.json: ${workoutsResponse.status}`);
                     }
@@ -1155,11 +1155,11 @@
             }
         }
         
-        async function saveWorkoutData() {
+        async function saveWorkoutDefinitions() {
             if (isDevelopment) {
                 // Save to localStorage in development
                 localStorage.setItem('workoutData', JSON.stringify(workoutData));
-                console.log('Workout data saved to localStorage');
+                console.log('Workout definitions saved to localStorage');
                 return;
             }
             
@@ -1190,7 +1190,7 @@
                 
                 // Now save the file
                 const body = {
-                    message: `Initialize workout data: ${new Date().toISOString()}`,
+                    message: `Update workout definitions: ${new Date().toISOString()}`,
                     content: content
                 };
                 
@@ -1212,12 +1212,18 @@
                     throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
                 }
                 
-                console.log('Workout data saved to GitHub successfully');
+                console.log('Workout definitions saved to GitHub successfully');
                 
             } catch (error) {
-                console.error('Failed to save workout data to GitHub:', error);
-                throw new Error(`Failed to save workout data: ${error.message}`);
+                console.error('Failed to save workout definitions to GitHub:', error);
+                throw new Error(`Failed to save workout definitions: ${error.message}`);
             }
+        }
+
+        async function saveWorkoutData() {
+            // This function is now focused on saving completed workout sessions
+            // For now, redirect to the appropriate function
+            await saveCompletedWorkouts();
         }
         
         async function saveCompletedWorkouts() {
