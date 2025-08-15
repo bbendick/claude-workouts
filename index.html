@@ -189,6 +189,10 @@
             font-weight: bold;
         }
         
+        .exercise-weight-display .sets-count {
+            font-size: 1.2rem;
+        }
+        
         .exercise-option.completed {
             border: 2px solid #4CAF50;
             background: #1a3d1a;
@@ -239,6 +243,12 @@
             font-size: 2rem;
             font-weight: bold;
             color: #ff9800;
+        }
+        
+        .sets-count {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffffff;
         }
         
         .exercise-info {
@@ -298,11 +308,12 @@
         
         .timer {
             text-align: center;
+            margin-top: 30px;
             margin-bottom: 20px;
         }
         
         .timer-display {
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
             color: #4CAF50;
             margin-bottom: 10px;
@@ -313,12 +324,33 @@
             font-size: 1.1rem;
         }
         
-        .exercise-timer {
+        .exercise-timer .timer-display {
             color: #ff9800;
         }
         
-        .rest-timer {
+        .rest-timer .timer-display {
             color: #4CAF50;
+        }
+        
+        .timer-expired {
+            animation: pulse 1s ease-in-out infinite !important;
+            color: #f44336 !important;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                background-color: rgba(244, 67, 54, 0.2);
+            }
+            50% {
+                transform: scale(1.2);
+                background-color: rgba(244, 67, 54, 0.8);
+                color: white !important;
+            }
+            100% {
+                transform: scale(1);
+                background-color: rgba(244, 67, 54, 0.2);
+            }
         }
         
         .complete-set-btn, .next-set-btn, .next-exercise-btn, .finish-btn {
@@ -451,11 +483,6 @@
                     </button>
                 </div>
                 
-                <div class="timer" id="timer-section" style="display: none;">
-                    <div class="timer-display" id="timer-display">00:00</div>
-                    <div class="timer-label" id="timer-label">Rest Timer</div>
-                </div>
-                
                 <button class="btn next-set-btn" id="next-set-btn" onclick="nextSet()" style="display: none;">
                     Next Set
                 </button>
@@ -467,6 +494,11 @@
                 <button class="btn finish-btn" id="finish-btn" onclick="finishWorkout()" style="display: none;">
                     Finish Workout
                 </button>
+                
+                <div class="timer" id="timer-section" style="display: none;">
+                    <div class="timer-display" id="timer-display">00:00</div>
+                    <div class="timer-label" id="timer-label">Rest Timer</div>
+                </div>
             </div>
         </div>
     </div>
@@ -484,6 +516,45 @@
         let timer = null;
         let timerSeconds = 0;
         let isExerciseTimer = false;
+        
+        // Audio context for beep sounds
+        let audioContext = null;
+        
+        function initAudioContext() {
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            } catch (e) {
+                console.log('Web Audio API not supported');
+            }
+        }
+        
+        function playBeepSound() {
+            if (!audioContext) {
+                initAudioContext();
+            }
+            
+            if (!audioContext) return;
+            
+            // Play 3 short beeps
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const oscillator = audioContext.createOscillator();
+                    const gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    
+                    oscillator.start();
+                    oscillator.stop(audioContext.currentTime + 0.2);
+                }, i * 250);
+            }
+        }
         
         // Helper function to resolve exercise data by combining exercise definition with workout overrides
         function resolveExercise(exerciseId, workoutOverrides = {}) {
@@ -642,8 +713,9 @@
         }
         
         function backToExerciseSelection() {
-            // Stop any active timers
+            // Stop any active timers and pulsing
             stopTimer();
+            stopPulsing();
             
             // Clear current exercise state
             currentSession = null;
@@ -744,7 +816,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 85,
                             "notes": ""
                         },
@@ -756,7 +828,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 70,
                             "notes": ""
                         },
@@ -768,7 +840,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 45,
                             "notes": ""
                         },
@@ -780,7 +852,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 180,
                             "notes": ""
                         },
@@ -792,8 +864,8 @@
                             "equipment": "bodyweight",
                             "defaultSets": 3,
                             "defaultTargetReps": 1,
-                            "defaultDuration": 30,
-                            "defaultRestTime": 60,
+                            "defaultDuration": 5,
+                            "defaultRestTime": 5,
                             "notes": ""
                         },
                         "standing-cable-rotations": {
@@ -804,7 +876,7 @@
                             "equipment": "cable",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 25,
                             "notes": "Focus on controlled rotation"
                         },
@@ -816,7 +888,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 60,
                             "notes": ""
                         },
@@ -828,7 +900,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 55,
                             "notes": ""
                         },
@@ -840,7 +912,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 75,
                             "notes": ""
                         },
@@ -852,7 +924,7 @@
                             "equipment": "cable",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 40,
                             "notes": ""
                         },
@@ -864,7 +936,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 35,
                             "notes": ""
                         },
@@ -876,8 +948,8 @@
                             "equipment": "bodyweight",
                             "defaultSets": 3,
                             "defaultTargetReps": 1,
-                            "defaultDuration": 30,
-                            "defaultRestTime": 60,
+                            "defaultDuration": 5,
+                            "defaultRestTime": 5,
                             "notes": ""
                         },
                         "chest-fly": {
@@ -888,7 +960,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 50,
                             "notes": ""
                         },
@@ -900,7 +972,7 @@
                             "equipment": "cable",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 30,
                             "notes": ""
                         },
@@ -912,7 +984,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 15,
                             "notes": ""
                         },
@@ -924,7 +996,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 45,
                             "notes": ""
                         },
@@ -936,7 +1008,7 @@
                             "equipment": "machine",
                             "defaultSets": 3,
                             "defaultTargetReps": 15,
-                            "defaultRestTime": 60,
+                            "defaultRestTime": 5,
                             "currentWeight": 80,
                             "notes": ""
                         }
@@ -1303,17 +1375,19 @@
                 div.onclick = () => startExercise(index);
                 
                 // Left column: exercise name and details
-                let details = `${exercise.sets} sets`;
+                let details = '';
                 if (!exercise.duration) {
-                    details += ` • ${exercise.targetReps} reps`;
+                    details = `Target: ${exercise.targetReps} reps`;
                 }
                 
-                // Right column: weight or duration
+                // Right column: sets x weight or duration
                 let rightColumn = '';
                 if (exercise.duration) {
-                    rightColumn = `<div class="exercise-weight-display">${exercise.duration}s</div>`;
+                    rightColumn = `<div class="exercise-weight-display"><span class="sets-count">${exercise.sets} x</span> ${exercise.duration}s</div>`;
                 } else if (exercise.currentWeight > 0) {
-                    rightColumn = `<div class="exercise-weight-display">${exercise.currentWeight} lbs</div>`;
+                    rightColumn = `<div class="exercise-weight-display"><span class="sets-count">${exercise.sets} x</span> ${exercise.currentWeight} lbs</div>`;
+                } else {
+                    rightColumn = `<div class="exercise-weight-display"><span class="sets-count">${exercise.sets}</span> sets</div>`;
                 }
                 
                 div.innerHTML = `
@@ -1363,21 +1437,23 @@
             
             document.getElementById('current-exercise-name').textContent = exercise.name;
             
-            // Display weight or duration prominently
+            // Display sets count with weight or duration prominently
             const weightElement = document.getElementById('current-exercise-weight');
             if (exercise.duration) {
-                // For time-based exercises, show duration prominently
-                weightElement.textContent = `${exercise.duration}s hold`;
+                // For time-based exercises, show sets x duration
+                weightElement.innerHTML = `<span class="sets-count">${exercise.sets} x</span> ${exercise.duration}s hold`;
                 weightElement.style.display = 'block';
             } else if (exercise.currentWeight > 0) {
-                // For weight-based exercises, show weight prominently
-                weightElement.textContent = `${exercise.currentWeight} lbs`;
+                // For weight-based exercises, show sets x weight
+                weightElement.innerHTML = `<span class="sets-count">${exercise.sets} x</span> ${exercise.currentWeight} lbs`;
                 weightElement.style.display = 'block';
             } else {
-                weightElement.style.display = 'none';
+                // For bodyweight exercises, just show sets
+                weightElement.innerHTML = `<span class="sets-count">${exercise.sets}</span> sets`;
+                weightElement.style.display = 'block';
             }
             
-            let info = `Set ${currentSet + 1} of ${exercise.sets}`;
+            let info = `Set ${currentSet + 1}`;
             if (!exercise.duration) {
                 info += ` • Target: ${exercise.targetReps} reps`;
             }
@@ -1420,6 +1496,9 @@
         }
         
         function completeSet() {
+            // Stop any pulsing animation
+            stopPulsing();
+            
             const workout = workoutData.workouts[currentSession.workoutId];
             const workoutExercise = workout.exercises[currentExerciseIndex];
             const exercise = resolveExercise(workoutExercise.exerciseId, workoutExercise);
@@ -1446,6 +1525,9 @@
         
         
         function nextSet() {
+            // Stop any pulsing animation
+            stopPulsing();
+            
             currentSet++;
             currentReps = 0;
             displayCurrentExercise();
@@ -1518,6 +1600,17 @@
             
             if (isExercise) {
                 timerSection.className = 'timer exercise-timer';
+                
+                // Show next set button immediately for exercise timers
+                const workout = workoutData.workouts[currentSession.workoutId];
+                const workoutExercise = workout.exercises[currentExerciseIndex];
+                const exercise = resolveExercise(workoutExercise.exerciseId, workoutExercise);
+                if (exercise && currentSet < exercise.sets - 1) {
+                    document.getElementById('next-set-btn').style.display = 'block';
+                } else if (exercise) {
+                    // Exercise is complete after this set
+                    document.getElementById('next-exercise-btn').style.display = 'block';
+                }
             } else {
                 timerSection.className = 'timer rest-timer';
             }
@@ -1529,7 +1622,21 @@
                 updateTimerDisplay();
                 
                 if (timerSeconds <= 0) {
-                    stopTimer();
+                    // Timer expired - trigger effects
+                    const timerDisplay = document.getElementById('timer-display');
+                    timerDisplay.classList.add('timer-expired');
+                    console.log('Added timer-expired class:', timerDisplay.className);
+                    playBeepSound();
+                    
+                    // Stop the interval but keep timer visible with pulsing
+                    if (timer) {
+                        clearInterval(timer);
+                        timer = null;
+                    }
+                    
+                    // Update display to show 00:00
+                    timerDisplay.textContent = '00:00';
+                    
                     if (isExercise) {
                         // Exercise timer finished, show complete set button
                         onExerciseTimerComplete();
@@ -1543,6 +1650,10 @@
             const workoutExercise = workout.exercises[currentExerciseIndex];
             const exercise = resolveExercise(workoutExercise.exerciseId, workoutExercise);
             if (!exercise) return;
+            
+            // Hide the next set button when timer expires
+            document.getElementById('next-set-btn').style.display = 'none';
+            document.getElementById('next-exercise-btn').style.display = 'none';
             
             // Show the complete set button
             const completeSetBtn = document.getElementById('complete-set-btn');
@@ -1567,6 +1678,13 @@
                 timer = null;
             }
             document.getElementById('timer-section').style.display = 'none';
+            
+            // Remove pulsing animation
+            document.getElementById('timer-display').classList.remove('timer-expired');
+        }
+        
+        function stopPulsing() {
+            document.getElementById('timer-display').classList.remove('timer-expired');
         }
         
         function showOfflineOption() {
