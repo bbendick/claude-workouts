@@ -212,6 +212,100 @@
             position: relative;
         }
         
+        .exercise-edit-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 3px;
+            transition: color 0.2s, background-color 0.2s;
+            z-index: 10;
+        }
+        
+        .exercise-edit-btn:hover {
+            color: #ff9800;
+            background-color: rgba(255, 152, 0, 0.1);
+        }
+        
+        .exercise-edit-screen {
+            display: none;
+        }
+        
+        .exercise-edit-screen.active {
+            display: block;
+        }
+        
+        .exercise-edit-form {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .exercise-edit-form h2 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+            font-size: 16px;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background: #333;
+            color: white;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: #666;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            flex: 1;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background: #555;
+        }
+        
         .current-exercise {
             background: #2a2a2a;
             padding: 20px;
@@ -459,6 +553,59 @@
             </button>
         </div>
         
+        <!-- Exercise Edit Screen -->
+        <div class="exercise-edit-screen">
+            <button class="btn back-btn" onclick="cancelEditExercise()">
+                ← Cancel
+            </button>
+            
+            <div class="exercise-edit-form">
+                <h2 id="edit-exercise-title">Edit Exercise</h2>
+                
+                <div class="form-group">
+                    <label for="edit-exercise-name">Exercise Name:</label>
+                    <input type="text" id="edit-exercise-name" placeholder="Exercise name">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-current-weight">Current Weight (lbs):</label>
+                        <input type="number" id="edit-current-weight" min="0" step="5" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-default-sets">Default Sets:</label>
+                        <input type="number" id="edit-default-sets" min="1" max="10" placeholder="3">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-default-reps">Default Target Reps:</label>
+                        <input type="number" id="edit-default-reps" min="1" max="50" placeholder="12">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-rest-time">Rest Time (seconds):</label>
+                        <input type="number" id="edit-rest-time" min="30" max="300" step="15" placeholder="60">
+                    </div>
+                </div>
+                
+                <div class="form-group" id="edit-duration-group" style="display: none;">
+                    <label for="edit-default-duration">Default Duration (seconds):</label>
+                    <input type="number" id="edit-default-duration" min="5" max="300" step="5" placeholder="30">
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit-notes">Notes:</label>
+                    <textarea id="edit-notes" placeholder="Exercise notes or instructions..."></textarea>
+                </div>
+                
+                <div class="btn-group">
+                    <button class="btn-secondary" onclick="cancelEditExercise()">Cancel</button>
+                    <button class="btn" onclick="saveExerciseEdit()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Workout Screen -->
         <div class="workout-screen">
             <button class="btn back-btn" onclick="backToExerciseSelection()">
@@ -702,6 +849,7 @@
             document.querySelector('.setup-screen').classList.remove('active');
             document.querySelector('.workout-selection').classList.remove('active');
             document.querySelector('.exercise-selection').classList.add('active');
+            document.querySelector('.exercise-edit-screen').classList.remove('active');
             document.querySelector('.workout-screen').classList.remove('active');
         }
         
@@ -709,6 +857,7 @@
             document.querySelector('.setup-screen').classList.remove('active');
             document.querySelector('.workout-selection').classList.remove('active');
             document.querySelector('.exercise-selection').classList.remove('active');
+            document.querySelector('.exercise-edit-screen').classList.remove('active');
             document.querySelector('.workout-screen').classList.add('active');
         }
         
@@ -1319,6 +1468,130 @@
             URL.revokeObjectURL(url);
         }
         
+        // Exercise editing functionality
+        let currentEditingExerciseId = null;
+        
+        function editExercise(exerciseId) {
+            currentEditingExerciseId = exerciseId;
+            const exercise = workoutData.exercises[exerciseId];
+            
+            if (!exercise) {
+                console.error('Exercise not found:', exerciseId);
+                return;
+            }
+            
+            // Populate form fields
+            document.getElementById('edit-exercise-title').textContent = `Edit: ${exercise.name}`;
+            document.getElementById('edit-exercise-name').value = exercise.name;
+            document.getElementById('edit-current-weight').value = exercise.currentWeight || 0;
+            document.getElementById('edit-default-sets').value = exercise.defaultSets;
+            document.getElementById('edit-default-reps').value = exercise.defaultTargetReps;
+            document.getElementById('edit-rest-time').value = exercise.defaultRestTime;
+            document.getElementById('edit-notes').value = exercise.notes || '';
+            
+            // Handle duration field for isometric exercises
+            const durationGroup = document.getElementById('edit-duration-group');
+            if (exercise.defaultDuration !== undefined) {
+                durationGroup.style.display = 'block';
+                document.getElementById('edit-default-duration').value = exercise.defaultDuration;
+            } else {
+                durationGroup.style.display = 'none';
+            }
+            
+            // Show edit screen
+            showExerciseEditScreen();
+        }
+        
+        function showExerciseEditScreen() {
+            document.querySelector('.setup-screen').classList.remove('active');
+            document.querySelector('.workout-selection').classList.remove('active');
+            document.querySelector('.exercise-selection').classList.remove('active');
+            document.querySelector('.exercise-edit-screen').classList.add('active');
+            document.querySelector('.workout-screen').classList.remove('active');
+        }
+        
+        function cancelEditExercise() {
+            currentEditingExerciseId = null;
+            showExerciseSelection();
+        }
+        
+        async function saveExerciseEdit() {
+            if (!currentEditingExerciseId) {
+                console.error('No exercise being edited');
+                return;
+            }
+            
+            const exercise = workoutData.exercises[currentEditingExerciseId];
+            if (!exercise) {
+                console.error('Exercise not found:', currentEditingExerciseId);
+                return;
+            }
+            
+            // Get form values
+            const name = document.getElementById('edit-exercise-name').value.trim();
+            const currentWeight = parseInt(document.getElementById('edit-current-weight').value) || 0;
+            const defaultSets = parseInt(document.getElementById('edit-default-sets').value) || 3;
+            const defaultTargetReps = parseInt(document.getElementById('edit-default-reps').value) || 12;
+            const defaultRestTime = parseInt(document.getElementById('edit-rest-time').value) || 60;
+            const notes = document.getElementById('edit-notes').value.trim();
+            
+            // Validation
+            if (!name) {
+                alert('Exercise name is required');
+                return;
+            }
+            
+            if (defaultSets < 1 || defaultSets > 10) {
+                alert('Sets must be between 1 and 10');
+                return;
+            }
+            
+            if (defaultTargetReps < 1 || defaultTargetReps > 50) {
+                alert('Target reps must be between 1 and 50');
+                return;
+            }
+            
+            if (defaultRestTime < 30 || defaultRestTime > 300) {
+                alert('Rest time must be between 30 and 300 seconds');
+                return;
+            }
+            
+            // Update exercise data
+            exercise.name = name;
+            exercise.currentWeight = currentWeight;
+            exercise.defaultSets = defaultSets;
+            exercise.defaultTargetReps = defaultTargetReps;
+            exercise.defaultRestTime = defaultRestTime;
+            exercise.notes = notes;
+            
+            // Handle duration for isometric exercises
+            if (exercise.defaultDuration !== undefined) {
+                const defaultDuration = parseInt(document.getElementById('edit-default-duration').value) || 30;
+                if (defaultDuration < 5 || defaultDuration > 300) {
+                    alert('Duration must be between 5 and 300 seconds');
+                    return;
+                }
+                exercise.defaultDuration = defaultDuration;
+            }
+            
+            try {
+                // Save to storage
+                await saveWorkoutDefinitions();
+                
+                // Show success and return to exercise list
+                alert('Exercise updated successfully!');
+                currentEditingExerciseId = null;
+                
+                // Refresh exercise list to show updated data
+                displayExerciseOptions();
+                showExerciseSelection();
+                
+            } catch (error) {
+                console.error('Failed to save exercise:', error);
+                alert('Failed to save exercise: ' + error.message);
+            }
+        }
+        
         function displayWorkoutOptions() {
             const container = document.getElementById('workout-options');
             container.innerHTML = '';
@@ -1397,6 +1670,7 @@
                 }
                 
                 div.innerHTML = `
+                    <button class="exercise-edit-btn" onclick="editExercise('${workoutExercise.exerciseId}'); event.stopPropagation();" title="Edit Exercise">⚙️</button>
                     <div class="exercise-left">
                         <div class="exercise-name-option">${exercise.name}</div>
                         <div class="exercise-details">${details}</div>
