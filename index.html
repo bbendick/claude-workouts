@@ -39,6 +39,7 @@
         }
         
         .settings-btn {
+	    position: absolute;
             background: none;
             border: none;
             color: #ccc;
@@ -53,6 +54,33 @@
         .settings-btn:hover {
             color: #4CAF50;
             background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .edit-mode-btn {
+            background: none;
+            border: 1px solid #666;
+            color: #ccc;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-left: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+            vertical-align: top;
+            position: relative;
+            top: 7px;
+        }
+        
+        .edit-mode-btn:hover {
+            color: #fff;
+            border-color: #888;
+        }
+        
+        .edit-mode-btn.active {
+            background: #ff9800;
+            border-color: #ff9800;
+            color: #fff;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
         
         .setup-screen, .workout-selection, .exercise-selection, .workout-screen {
@@ -128,10 +156,34 @@
             cursor: pointer;
             border: 2px solid transparent;
             transition: border-color 0.2s;
+            position: relative;
         }
         
         .workout-option:hover {
             border-color: #4CAF50;
+        }
+        
+        .workout-edit-btn {
+            position: absolute;
+            top: -15px;
+            right: -10px;
+            background: none;
+            border: none;
+            color: #ccc;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 0;
+            border-radius: 0;
+            transition: color 0.2s, background-color 0.2s;
+            z-index: 10;
+            width: 20px;
+            height: 25px;
+            overflow: hidden;
+        }
+        
+        .workout-edit-btn:hover {
+            color: #ff9800;
+            background-color: rgba(255, 152, 0, 0.1);
         }
         
         .workout-title {
@@ -214,8 +266,8 @@
         
         .exercise-edit-btn {
             position: absolute;
-            top: -5px;
-            right: 0;
+            top: -15px;
+            right: -10px;
             background: none;
             border: none;
             color: #ccc;
@@ -307,6 +359,119 @@
         
         .btn-secondary:hover {
             background: #555;
+        }
+        
+        /* Workout Edit Screen Styles */
+        .workout-edit-screen {
+            display: none;
+        }
+        
+        .workout-edit-screen.active {
+            display: block;
+        }
+        
+        .exercise-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .exercise-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+        
+        .current-exercises {
+            min-height: 100px;
+            padding: 10px;
+            border: 2px dashed #444;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .current-exercises.drag-over {
+            border-color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.1);
+        }
+        
+        .workout-exercise-item {
+            background: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: grab;
+            border: 2px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .workout-exercise-item:hover {
+            background: #3a3a3a;
+            border-color: #4CAF50;
+        }
+        
+        .workout-exercise-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            transform: rotate(2deg);
+        }
+        
+        .workout-exercise-item .drag-handle {
+            color: #888;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .workout-exercise-item .exercise-info {
+            flex: 1;
+        }
+        
+        .workout-exercise-item .exercise-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .workout-exercise-item .exercise-sets {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        
+        .workout-exercise-item .remove-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        
+        .available-exercise-item {
+            background: #333;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .available-exercise-item:hover {
+            background: #3a3a3a;
+            border-color: #2196F3;
+        }
+        
+        .available-exercise-item .exercise-name {
+            font-weight: bold;
+            margin-bottom: 2px;
+        }
+        
+        .available-exercise-item .exercise-details {
+            font-size: 0.9rem;
+            color: #ccc;
         }
         
         .current-exercise {
@@ -498,8 +663,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💪 Gym Tracker 
-                <button class="settings-btn" onclick="showSetup()" title="GitHub Settings">⚙️</button>
+            <h1>Gym Tracker 
+                <button class="edit-mode-btn" id="edit-mode-btn" onclick="toggleEditMode()">Edit</button>
+                <button class="settings-btn" id="settings-btn" onclick="showSetup()" title="GitHub Settings" style="display: none;">⚙️</button>
             </h1>
         </div>
         
@@ -552,10 +718,45 @@
             <div id="exercise-options"></div>
             
             <button class="btn save-progress-btn" id="save-progress-btn" onclick="saveProgress()" style="background: #2196F3; margin-top: 20px; padding: 20px 30px; font-size: 20px;">
-                💾 Save Progress
+                Save Progress
             </button>
         </div>
         
+        <!-- Workout Edit Screen -->
+        <div class="workout-edit-screen">
+            <button class="btn back-btn" onclick="cancelEditWorkout()">
+                ← Back to Days
+            </button>
+            
+            <h2 id="workout-edit-title">Edit Workout</h2>
+            
+            <div class="exercise-section">
+                <h3>Workout Name</h3>
+                <div class="form-group">
+                    <input type="text" id="edit-workout-name" placeholder="Workout name" style="width: 100%; padding: 12px; border: 1px solid #444; border-radius: 5px; background: #333; color: white; font-size: 16px; margin-bottom: 15px;">
+                </div>
+            </div>
+            
+            <div class="exercise-section">
+                <h3>Exercises in this workout</h3>
+                <div class="current-exercises" id="current-exercises">
+                    <!-- Current workout exercises will be populated here -->
+                </div>
+            </div>
+            
+            <div class="exercise-section">
+                <h3>Available exercises</h3>
+                <div id="available-exercises">
+                    <!-- Available exercises will be populated here -->
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="cancelEditWorkout()">Cancel</button>
+                <button class="btn-secondary" onclick="saveWorkoutEdit()" style="background: #4CAF50;">Save Changes</button>
+            </div>
+        </div>
+
         <!-- Exercise Edit Screen -->
         <div class="exercise-edit-screen">
             <button class="btn back-btn" onclick="cancelEditExercise()">
@@ -568,6 +769,14 @@
                 <div class="form-group">
                     <label for="edit-exercise-name">Exercise Name:</label>
                     <input type="text" id="edit-exercise-name" placeholder="Exercise name">
+                </div>
+                
+                <div class="form-group" id="edit-exercise-type-group" style="display: none;">
+                    <label for="edit-exercise-type">Exercise Type:</label>
+                    <select id="edit-exercise-type" style="width: 100%; padding: 12px; border: 1px solid #444; border-radius: 5px; background: #333; color: white; font-size: 16px;" onchange="toggleDurationField()">
+                        <option value="strength">Strength (reps-based)</option>
+                        <option value="isometric">Isometric (time-based)</option>
+                    </select>
                 </div>
                 
                 <div class="form-row">
@@ -601,11 +810,11 @@
                     <label for="edit-notes">Notes:</label>
                     <textarea id="edit-notes" placeholder="Exercise notes or instructions..."></textarea>
                 </div>
-                
-                <div class="btn-group">
-                    <button class="btn-secondary" onclick="cancelEditExercise()">Cancel</button>
-                    <button class="btn" onclick="saveExerciseEdit()">Save Changes</button>
-                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="cancelEditExercise()">Cancel</button>
+                <button class="btn-secondary" onclick="saveExerciseEdit()" style="background: #4CAF50;">Save Changes</button>
             </div>
         </div>
 
@@ -627,11 +836,9 @@
                 </div>
             </div>
                 
-                <div class="set-controls" id="set-controls">
-                    <button class="btn complete-set-btn" id="complete-set-btn" onclick="completeSet()">
-                        Mark Set 1 Done
-                    </button>
-                </div>
+                <button class="btn complete-set-btn" id="complete-set-btn" onclick="completeSet()">
+                    Mark Set 1 Done
+                </button>
                 
                 <button class="btn next-set-btn" id="next-set-btn" onclick="nextSet()" style="display: none;">
                     Next Set
@@ -666,6 +873,7 @@
         let timer = null;
         let timerSeconds = 0;
         let isExerciseTimer = false;
+        let editModeEnabled = false;
         
         // Audio context for beep sounds
         let audioContext = null;
@@ -735,8 +943,59 @@
             // Add event listener for connect button
             document.getElementById('connect-btn').addEventListener('click', setupGitHub);
             
+            // Initialize edit mode (will be called again in loadWorkoutData but that's ok)
+            initializeEditMode();
+            
             loadGitHubConfig();
         };
+        
+        function initializeEditMode() {
+            // Load edit mode state from localStorage
+            editModeEnabled = localStorage.getItem('editMode') === 'true';
+            updateEditModeButton();
+            updateEditButtonVisibility();
+        }
+        
+        function toggleEditMode() {
+            editModeEnabled = !editModeEnabled;
+            localStorage.setItem('editMode', editModeEnabled);
+            updateEditModeButton();
+            updateEditButtonVisibility();
+        }
+        
+        function updateEditModeButton() {
+            const btn = document.getElementById('edit-mode-btn');
+            if (editModeEnabled) {
+                btn.textContent = 'Editing';
+                btn.classList.add('active');
+            } else {
+                btn.textContent = 'Edit';
+                btn.classList.remove('active');
+            }
+        }
+        
+        function updateEditButtonVisibility() {
+            const editButtons = document.querySelectorAll('.exercise-edit-btn, .workout-edit-btn');
+            editButtons.forEach(btn => {
+                btn.style.display = editModeEnabled ? 'block' : 'none';
+            });
+            
+            // Show/hide settings button based on edit mode
+            const settingsBtn = document.getElementById('settings-btn');
+            settingsBtn.style.display = editModeEnabled ? 'inline-block' : 'none';
+            
+            // Refresh workout options to show/hide "Add New Day" button if on workout selection screen
+            if (document.querySelector('.workout-selection').classList.contains('active')) {
+                displayWorkoutOptions();
+                // After refreshing, apply edit button visibility again
+                setTimeout(() => {
+                    const refreshedEditButtons = document.querySelectorAll('.exercise-edit-btn, .workout-edit-btn');
+                    refreshedEditButtons.forEach(btn => {
+                        btn.style.display = editModeEnabled ? 'block' : 'none';
+                    });
+                }, 0);
+            }
+        }
         
         // Show status messages in the setup screen
         function showStatus(elementId, message, type) {
@@ -845,6 +1104,8 @@
             document.querySelector('.setup-screen').classList.remove('active');
             document.querySelector('.workout-selection').classList.add('active');
             document.querySelector('.exercise-selection').classList.remove('active');
+            document.querySelector('.workout-edit-screen').classList.remove('active');
+            document.querySelector('.exercise-edit-screen').classList.remove('active');
             document.querySelector('.workout-screen').classList.remove('active');
         }
         
@@ -852,6 +1113,7 @@
             document.querySelector('.setup-screen').classList.remove('active');
             document.querySelector('.workout-selection').classList.remove('active');
             document.querySelector('.exercise-selection').classList.add('active');
+            document.querySelector('.workout-edit-screen').classList.remove('active');
             document.querySelector('.exercise-edit-screen').classList.remove('active');
             document.querySelector('.workout-screen').classList.remove('active');
         }
@@ -860,6 +1122,7 @@
             document.querySelector('.setup-screen').classList.remove('active');
             document.querySelector('.workout-selection').classList.remove('active');
             document.querySelector('.exercise-selection').classList.remove('active');
+            document.querySelector('.workout-edit-screen').classList.remove('active');
             document.querySelector('.exercise-edit-screen').classList.remove('active');
             document.querySelector('.workout-screen').classList.add('active');
         }
@@ -1221,6 +1484,8 @@
                     ]
                 };
                 
+                // Initialize edit mode before displaying options
+                initializeEditMode();
                 displayWorkoutOptions();
                 displayLastWorkout();
                 showWorkoutSelection();
@@ -1286,6 +1551,8 @@
                     completedWorkouts = JSON.parse(atob(completedData.content));
                 }
                 
+                // Initialize edit mode before displaying options
+                initializeEditMode();
                 displayWorkoutOptions();
                 displayLastWorkout();
                 
@@ -1473,8 +1740,54 @@
         
         // Exercise editing functionality
         let currentEditingExerciseId = null;
+        let isAddingNewExercise = false;
+        let addExerciseReturnScreen = null;
+        
+        function addExercise() {
+            isAddingNewExercise = true;
+            currentEditingExerciseId = null;
+            
+            // Determine return screen based on current active screen
+            if (document.querySelector('.workout-edit-screen').classList.contains('active')) {
+                addExerciseReturnScreen = 'workout-edit';
+            } else {
+                addExerciseReturnScreen = 'setup';
+            }
+            
+            // Clear and populate form for new exercise
+            document.getElementById('edit-exercise-title').textContent = 'Add New Exercise';
+            document.getElementById('edit-exercise-name').value = '';
+            document.getElementById('edit-current-weight').value = 0;
+            document.getElementById('edit-default-sets').value = 3;
+            document.getElementById('edit-default-reps').value = 12;
+            document.getElementById('edit-rest-time').value = 60;
+            document.getElementById('edit-default-duration').value = 30;
+            document.getElementById('edit-notes').value = '';
+            
+            // Show exercise type selection for new exercises
+            document.getElementById('edit-exercise-type-group').style.display = 'block';
+            document.getElementById('edit-exercise-type').value = 'strength';
+            
+            // Hide duration field initially (will show if isometric is selected)
+            document.getElementById('edit-duration-group').style.display = 'none';
+            
+            // Show edit screen
+            showExerciseEditScreen();
+        }
+        
+        function toggleDurationField() {
+            const exerciseType = document.getElementById('edit-exercise-type').value;
+            const durationGroup = document.getElementById('edit-duration-group');
+            
+            if (exerciseType === 'isometric') {
+                durationGroup.style.display = 'block';
+            } else {
+                durationGroup.style.display = 'none';
+            }
+        }
         
         function editExercise(exerciseId) {
+            isAddingNewExercise = false;
             currentEditingExerciseId = exerciseId;
             const exercise = workoutData.exercises[exerciseId];
             
@@ -1491,6 +1804,9 @@
             document.getElementById('edit-default-reps').value = exercise.defaultTargetReps;
             document.getElementById('edit-rest-time').value = exercise.defaultRestTime;
             document.getElementById('edit-notes').value = exercise.notes || '';
+            
+            // Hide exercise type selection for editing existing exercises
+            document.getElementById('edit-exercise-type-group').style.display = 'none';
             
             // Handle duration field for isometric exercises
             const durationGroup = document.getElementById('edit-duration-group');
@@ -1509,25 +1825,63 @@
             document.querySelector('.setup-screen').classList.remove('active');
             document.querySelector('.workout-selection').classList.remove('active');
             document.querySelector('.exercise-selection').classList.remove('active');
+            document.querySelector('.workout-edit-screen').classList.remove('active');
             document.querySelector('.exercise-edit-screen').classList.add('active');
             document.querySelector('.workout-screen').classList.remove('active');
         }
         
         function cancelEditExercise() {
+            const wasAdding = isAddingNewExercise;
+            const returnScreen = addExerciseReturnScreen;
+            
             currentEditingExerciseId = null;
-            showExerciseSelection();
+            isAddingNewExercise = false;
+            addExerciseReturnScreen = null;
+            
+            if (wasAdding) {
+                // Return to the appropriate screen based on where add was initiated
+                if (returnScreen === 'workout-edit') {
+                    showWorkoutEditScreen();
+                } else {
+                    showSetup();
+                }
+            } else {
+                // Return to exercise selection if canceling edit
+                showExerciseSelection();
+            }
         }
         
         async function saveExerciseEdit() {
-            if (!currentEditingExerciseId) {
+            if (!isAddingNewExercise && !currentEditingExerciseId) {
                 console.error('No exercise being edited');
                 return;
             }
             
-            const exercise = workoutData.exercises[currentEditingExerciseId];
-            if (!exercise) {
-                console.error('Exercise not found:', currentEditingExerciseId);
-                return;
+            let exercise;
+            let exerciseId;
+            
+            if (isAddingNewExercise) {
+                // Generate a unique ID for new exercise
+                exerciseId = document.getElementById('edit-exercise-name').value.toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^a-z0-9-]/g, '');
+                
+                // Ensure ID is unique
+                let baseId = exerciseId;
+                let counter = 1;
+                while (workoutData.exercises[exerciseId]) {
+                    exerciseId = `${baseId}-${counter}`;
+                    counter++;
+                }
+                
+                exercise = {};
+            } else {
+                exercise = workoutData.exercises[currentEditingExerciseId];
+                exerciseId = currentEditingExerciseId;
+                if (!exercise) {
+                    console.error('Exercise not found:', currentEditingExerciseId);
+                    return;
+                }
             }
             
             // Get form values
@@ -1560,6 +1914,7 @@
             }
             
             // Update exercise data
+            exercise.id = exerciseId;
             exercise.name = name;
             exercise.currentWeight = currentWeight;
             exercise.defaultSets = defaultSets;
@@ -1567,32 +1922,352 @@
             exercise.defaultRestTime = defaultRestTime;
             exercise.notes = notes;
             
-            // Handle duration for isometric exercises
-            if (exercise.defaultDuration !== undefined) {
-                const defaultDuration = parseInt(document.getElementById('edit-default-duration').value) || 30;
-                if (defaultDuration < 5 || defaultDuration > 300) {
-                    alert('Duration must be between 5 and 300 seconds');
-                    return;
+            // Set exercise type and additional properties for new exercises
+            if (isAddingNewExercise) {
+                const exerciseType = document.getElementById('edit-exercise-type').value;
+                exercise.type = exerciseType;
+                exercise.muscleGroups = ["general"]; // Default muscle group
+                exercise.equipment = "machine"; // Default equipment
+                
+                if (exerciseType === 'isometric') {
+                    const defaultDuration = parseInt(document.getElementById('edit-default-duration').value) || 30;
+                    if (defaultDuration < 5 || defaultDuration > 300) {
+                        alert('Duration must be between 5 and 300 seconds');
+                        return;
+                    }
+                    exercise.defaultDuration = defaultDuration;
                 }
-                exercise.defaultDuration = defaultDuration;
+            } else {
+                // Handle duration for existing isometric exercises
+                if (exercise.defaultDuration !== undefined) {
+                    const defaultDuration = parseInt(document.getElementById('edit-default-duration').value) || 30;
+                    if (defaultDuration < 5 || defaultDuration > 300) {
+                        alert('Duration must be between 5 and 300 seconds');
+                        return;
+                    }
+                    exercise.defaultDuration = defaultDuration;
+                }
             }
             
             try {
+                // Add new exercise to the exercises collection
+                if (isAddingNewExercise) {
+                    workoutData.exercises[exerciseId] = exercise;
+                }
+                
                 // Save to storage
                 await saveWorkoutDefinitions();
                 
-                // Show success and return to exercise list
-                alert('Exercise updated successfully!');
-                currentEditingExerciseId = null;
+                // Show success message
+                const successMessage = isAddingNewExercise ? 
+                    'Exercise created successfully!' : 
+                    'Exercise updated successfully!';
+                alert(successMessage);
                 
-                // Refresh exercise list to show updated data
-                displayExerciseOptions();
-                showExerciseSelection();
+                // Reset state
+                const wasAdding = isAddingNewExercise;
+                const returnScreen = addExerciseReturnScreen;
+                currentEditingExerciseId = null;
+                isAddingNewExercise = false;
+                addExerciseReturnScreen = null;
+                
+                // Navigate back to appropriate screen
+                if (wasAdding) {
+                    if (returnScreen === 'workout-edit') {
+                        // Refresh available exercises list and return to workout edit
+                        displayAvailableExercises();
+                        showWorkoutEditScreen();
+                    } else {
+                        showSetup();
+                    }
+                } else {
+                    // Refresh exercise list to show updated data
+                    displayExerciseOptions();
+                    showExerciseSelection();
+                }
                 
             } catch (error) {
                 console.error('Failed to save exercise:', error);
                 alert('Failed to save exercise: ' + error.message);
             }
+        }
+        
+        // Workout editing functionality
+        let currentEditingWorkoutId = null;
+        let isAddingNewDay = false;
+        
+        function editWorkout(workoutId) {
+            isAddingNewDay = false;
+            currentEditingWorkoutId = workoutId;
+            const workout = workoutData.workouts[workoutId];
+            
+            if (!workout) {
+                console.error('Workout not found:', workoutId);
+                return;
+            }
+            
+            // Set title and populate workout name field
+            document.getElementById('workout-edit-title').textContent = `Edit: ${workout.name}`;
+            document.getElementById('edit-workout-name').value = workout.name;
+            
+            // Populate current exercises
+            displayCurrentWorkoutExercises();
+            
+            // Populate available exercises
+            displayAvailableExercises();
+            
+            // Show workout edit screen
+            showWorkoutEditScreen();
+        }
+        
+        function showWorkoutEditScreen() {
+            document.querySelector('.setup-screen').classList.remove('active');
+            document.querySelector('.workout-selection').classList.remove('active');
+            document.querySelector('.exercise-selection').classList.remove('active');
+            document.querySelector('.workout-edit-screen').classList.add('active');
+            document.querySelector('.exercise-edit-screen').classList.remove('active');
+            document.querySelector('.workout-screen').classList.remove('active');
+        }
+        
+        function cancelEditWorkout() {
+            // If we were adding a new day, remove it from the data
+            if (isAddingNewDay && currentEditingWorkoutId) {
+                delete workoutData.workouts[currentEditingWorkoutId];
+            }
+            
+            currentEditingWorkoutId = null;
+            isAddingNewDay = false;
+            showWorkoutSelection();
+        }
+        
+        function displayCurrentWorkoutExercises() {
+            const workout = workoutData.workouts[currentEditingWorkoutId];
+            const container = document.getElementById('current-exercises');
+            container.innerHTML = '';
+            
+            workout.exercises.forEach((workoutExercise, index) => {
+                const exercise = resolveExercise(workoutExercise.exerciseId, workoutExercise);
+                if (!exercise) return;
+                
+                const div = document.createElement('div');
+                div.className = 'workout-exercise-item';
+                div.draggable = true;
+                div.dataset.exerciseIndex = index;
+                
+                // Add drag event listeners
+                div.addEventListener('dragstart', handleDragStart);
+                div.addEventListener('dragend', handleDragEnd);
+                
+                div.innerHTML = `
+                    <span class="drag-handle">⋮⋮</span>
+                    <div class="exercise-info">
+                        <div class="exercise-name">${exercise.name}</div>
+                        <div class="exercise-sets">${exercise.sets} sets × ${exercise.targetReps}${exercise.duration ? 's hold' : ' reps'}</div>
+                    </div>
+                    <button class="remove-btn" onclick="removeExerciseFromWorkout(${index})">✕</button>
+                `;
+                
+                container.appendChild(div);
+            });
+            
+            // Add drop event listeners to container
+            container.addEventListener('dragover', handleDragOver);
+            container.addEventListener('drop', handleDrop);
+        }
+        
+        function displayAvailableExercises() {
+            const workout = workoutData.workouts[currentEditingWorkoutId];
+            const container = document.getElementById('available-exercises');
+            container.innerHTML = '';
+            
+            // Get list of exercise IDs already in the workout
+            const usedExerciseIds = workout.exercises.map(we => we.exerciseId);
+            
+            Object.keys(workoutData.exercises).forEach(exerciseId => {
+                // Skip exercises already in the workout
+                if (usedExerciseIds.includes(exerciseId)) return;
+                
+                const exercise = workoutData.exercises[exerciseId];
+                const div = document.createElement('div');
+                div.className = 'available-exercise-item';
+                div.onclick = () => addExerciseToWorkout(exerciseId);
+                
+                div.innerHTML = `
+                    <div class="exercise-name">${exercise.name}</div>
+                    <div class="exercise-details">${exercise.defaultSets} sets × ${exercise.defaultTargetReps}${exercise.defaultDuration ? 's hold' : ' reps'}</div>
+                `;
+                
+                container.appendChild(div);
+            });
+            
+            // Add "Add New Exercise" button at the end (only in edit mode)
+            if (editModeEnabled) {
+                const addBtn = document.createElement('div');
+                addBtn.className = 'available-exercise-item';
+                addBtn.style.background = '#2196F3';
+                addBtn.style.textAlign = 'center';
+                addBtn.style.fontWeight = 'bold';
+                addBtn.onclick = () => addExercise();
+                
+                addBtn.innerHTML = `
+                    <div class="exercise-name">➕ Add New Exercise</div>
+                    <div class="exercise-details">Create a custom exercise</div>
+                `;
+                
+                container.appendChild(addBtn);
+            }
+        }
+        
+        function addExerciseToWorkout(exerciseId) {
+            const workout = workoutData.workouts[currentEditingWorkoutId];
+            const exercise = workoutData.exercises[exerciseId];
+            
+            // Add exercise to workout with default values
+            const workoutExercise = {
+                exerciseId: exerciseId,
+                sets: exercise.defaultSets,
+                targetReps: exercise.defaultTargetReps
+            };
+            
+            workout.exercises.push(workoutExercise);
+            
+            // Refresh displays
+            displayCurrentWorkoutExercises();
+            displayAvailableExercises();
+        }
+        
+        function removeExerciseFromWorkout(index) {
+            const workout = workoutData.workouts[currentEditingWorkoutId];
+            workout.exercises.splice(index, 1);
+            
+            // Refresh displays
+            displayCurrentWorkoutExercises();
+            displayAvailableExercises();
+        }
+        
+        async function saveWorkoutEdit() {
+            try {
+                // Update workout name
+                const workout = workoutData.workouts[currentEditingWorkoutId];
+                const newName = document.getElementById('edit-workout-name').value.trim();
+                
+                if (!newName) {
+                    alert('Workout name is required');
+                    return;
+                }
+                
+                workout.name = newName;
+                
+                // Save to storage
+                await saveWorkoutDefinitions();
+                
+                const successMessage = isAddingNewDay ? 
+                    'New workout day created successfully!' : 
+                    'Workout updated successfully!';
+                alert(successMessage);
+                
+                currentEditingWorkoutId = null;
+                isAddingNewDay = false;
+                
+                // Refresh workout list and return to selection
+                displayWorkoutOptions();
+                showWorkoutSelection();
+                
+            } catch (error) {
+                console.error('Failed to save workout:', error);
+                alert('Failed to save workout: ' + error.message);
+            }
+        }
+        
+        // Drag and drop functionality
+        let draggedElement = null;
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            
+            this.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            this.classList.remove('drag-over');
+            
+            if (draggedElement !== e.target && draggedElement !== null) {
+                const draggedIndex = parseInt(draggedElement.dataset.exerciseIndex);
+                const targetElement = e.target.closest('.workout-exercise-item');
+                
+                if (targetElement) {
+                    const targetIndex = parseInt(targetElement.dataset.exerciseIndex);
+                    
+                    // Reorder exercises in the workout data
+                    const workout = workoutData.workouts[currentEditingWorkoutId];
+                    const draggedExercise = workout.exercises[draggedIndex];
+                    
+                    // Remove from old position
+                    workout.exercises.splice(draggedIndex, 1);
+                    
+                    // Insert at new position
+                    const newIndex = draggedIndex < targetIndex ? targetIndex - 1 : targetIndex;
+                    workout.exercises.splice(newIndex, 0, draggedExercise);
+                    
+                    // Refresh display
+                    displayCurrentWorkoutExercises();
+                }
+            }
+            
+            return false;
+        }
+        
+        function addNewDay() {
+            isAddingNewDay = true;
+            
+            // Generate a unique ID for new workout
+            let workoutId = 'day-custom';
+            let counter = 1;
+            while (workoutData.workouts[workoutId]) {
+                workoutId = `day-custom-${counter}`;
+                counter++;
+            }
+            
+            currentEditingWorkoutId = workoutId;
+            
+            // Create a new empty workout
+            workoutData.workouts[workoutId] = {
+                name: 'New Workout Day',
+                exercises: []
+            };
+            
+            // Set title and populate workout name field
+            document.getElementById('workout-edit-title').textContent = 'Add New Day';
+            document.getElementById('edit-workout-name').value = 'New Workout Day';
+            
+            // Populate current exercises (empty)
+            displayCurrentWorkoutExercises();
+            
+            // Populate all available exercises
+            displayAvailableExercises();
+            
+            // Show workout edit screen
+            showWorkoutEditScreen();
         }
         
         function displayWorkoutOptions() {
@@ -1606,12 +2281,30 @@
                 div.onclick = () => startWorkout(workoutId);
                 
                 div.innerHTML = `
+                    <button class="workout-edit-btn" onclick="editWorkout('${workoutId}'); event.stopPropagation();" title="Edit Workout" style="display: ${editModeEnabled ? 'block' : 'none'};">⚙️</button>
                     <div class="workout-title">${workout.name}</div>
                     <div class="exercise-count">${workout.exercises.length} exercises</div>
                 `;
                 
                 container.appendChild(div);
             });
+            
+            // Add "Add New Day" button at the end (only in edit mode)
+            if (editModeEnabled) {
+                const addDayBtn = document.createElement('div');
+                addDayBtn.className = 'workout-option';
+                addDayBtn.style.background = '#2196F3';
+                addDayBtn.style.textAlign = 'center';
+                addDayBtn.style.fontWeight = 'bold';
+                addDayBtn.onclick = () => addNewDay();
+                
+                addDayBtn.innerHTML = `
+                    <div class="workout-title">➕ Add New Day</div>
+                    <div class="exercise-count">Create a custom workout day</div>
+                `;
+                
+                container.appendChild(addDayBtn);
+            }
         }
         
         function displayLastWorkout() {
@@ -1673,7 +2366,7 @@
                 }
                 
                 div.innerHTML = `
-                    <button class="exercise-edit-btn" onclick="editExercise('${workoutExercise.exerciseId}'); event.stopPropagation();" title="Edit Exercise">⚙️</button>
+                    <button class="exercise-edit-btn" onclick="editExercise('${workoutExercise.exerciseId}'); event.stopPropagation();" title="Edit Exercise" style="display: ${editModeEnabled ? 'block' : 'none'};">⚙️</button>
                     <div class="exercise-left">
                         <div class="exercise-name-option">${exercise.name}</div>
                         <div class="exercise-details">${details}</div>
@@ -1692,9 +2385,12 @@
                 saveProgressBtn.textContent = '🎉 Complete Day';
                 saveProgressBtn.style.background = '#4CAF50';
             } else {
-                saveProgressBtn.textContent = '💾 Save Progress';
+                saveProgressBtn.textContent = 'Save Progress';
                 saveProgressBtn.style.background = '#2196F3';
             }
+            
+            // Update edit button visibility
+            updateEditButtonVisibility();
         }
         
         function startExercise(exerciseIndex) {
@@ -1759,8 +2455,8 @@
             document.getElementById('next-exercise-btn').style.display = 'none';
             document.getElementById('finish-btn').style.display = 'none';
             
-            // Show set controls
-            document.getElementById('set-controls').style.display = 'block';
+            // Show complete set button
+            document.getElementById('complete-set-btn').style.display = 'block';
             
             stopTimer();
         }
@@ -1772,7 +2468,7 @@
             if (!exercise) return;
             
             // Hide the start button
-            document.getElementById('set-controls').style.display = 'none';
+            document.getElementById('complete-set-btn').style.display = 'none';
             
             // Start the exercise timer (countdown)
             startExerciseTimer(exercise.duration);
@@ -1791,7 +2487,7 @@
             recordSet();
             
             // Hide the complete set button
-            document.getElementById('set-controls').style.display = 'none';
+            document.getElementById('complete-set-btn').style.display = 'none';
             
             // Start rest timer
             startRestTimer(exercise.restTime);
@@ -1942,7 +2638,7 @@
             const completeSetBtn = document.getElementById('complete-set-btn');
             completeSetBtn.textContent = `Mark Set ${currentSet + 1} Done`;
             completeSetBtn.onclick = () => completeSet();
-            document.getElementById('set-controls').style.display = 'block';
+            document.getElementById('complete-set-btn').style.display = 'block';
             
             // Update status text
             document.getElementById('set-info').textContent = `Set complete! Click to finish`;
@@ -2033,6 +2729,8 @@
             // Mark as offline mode
             sessionStorage.setItem('offlineMode', 'true');
             
+            // Initialize edit mode before displaying options
+            initializeEditMode();
             displayWorkoutOptions();
             displayLastWorkout();
             showWorkoutSelection();
