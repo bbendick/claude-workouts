@@ -587,7 +587,7 @@
         }
         
         .exercise-timer .timer-display {
-            color: #ff9800;
+            color: #4CAF50;
         }
         
         .rest-timer .timer-display {
@@ -856,6 +856,10 @@
                     <div class="timer-display" id="timer-display">00:00</div>
                     <div class="timer-label" id="timer-label">Rest Timer</div>
                 </div>
+                
+                <div id="next-exercise-preview" style="display: none;">
+                    <div style="margin: 20px 0 10px 0; color: #ccc; font-size: 1.1rem;">Next Exercise:</div>
+                </div>
             </div>
         </div>
     </div>
@@ -877,6 +881,7 @@
         
         // Audio context for beep sounds
         let audioContext = null;
+        let beepTimer = null;
         
         function initAudioContext() {
             try {
@@ -886,7 +891,7 @@
             }
         }
         
-        function playBeepSound() {
+        function playBeepCycle() {
             if (!audioContext) {
                 initAudioContext();
             }
@@ -911,6 +916,101 @@
                     oscillator.start();
                     oscillator.stop(audioContext.currentTime + 0.2);
                 }, i * 250);
+            }
+        }
+
+        function startContinuousBeeping() {
+            // Stop any existing beep timer
+            stopBeeping();
+            
+            // Play first beep cycle immediately
+            playBeepCycle();
+            
+            // Set up repeating beep cycle with 1 second gap
+            beepTimer = setInterval(() => {
+                playBeepCycle();
+            }, 1750); // 750ms for 3 beeps + 1000ms gap
+        }
+
+        function stopBeeping() {
+            if (beepTimer) {
+                clearInterval(beepTimer);
+                beepTimer = null;
+            }
+        }
+
+        function showNextExercisePreview() {
+            const workout = workoutData.workouts[selectedWorkoutId];
+            const nextExerciseIndex = currentExerciseIndex + 1;
+            
+            // Check if there's a next exercise
+            if (nextExerciseIndex >= workout.exercises.length) {
+                return; // No next exercise, workout is complete
+            }
+            
+            const nextWorkoutExercise = workout.exercises[nextExerciseIndex];
+            const nextExercise = resolveExercise(nextWorkoutExercise.exerciseId, nextWorkoutExercise);
+            if (!nextExercise) return;
+            
+            // Create the preview card
+            const previewContainer = document.getElementById('next-exercise-preview');
+            
+            // Clear existing content and add label
+            previewContainer.innerHTML = '<div style="margin: 20px 0 10px 0; color: #ccc; font-size: 1.1rem;">Next Exercise:</div>';
+            
+            // Create exercise option div
+            const div = document.createElement('div');
+            div.className = 'exercise-option';
+            div.style.cursor = 'pointer';
+            div.onclick = () => skipToNextExercise();
+            
+            // Left column: exercise name and details
+            let details = '';
+            if (!nextExercise.duration) {
+                details = `Target: ${nextExercise.targetReps} reps`;
+            }
+            
+            // Right column: sets x weight or duration
+            let rightColumn = '';
+            if (nextExercise.duration) {
+                rightColumn = `<div class="exercise-weight-display"><span class="sets-count">${nextExercise.sets} x</span> ${nextExercise.duration}s</div>`;
+            } else if (nextExercise.currentWeight > 0) {
+                rightColumn = `<div class="exercise-weight-display"><span class="sets-count">${nextExercise.sets} x</span> ${nextExercise.currentWeight} lbs</div>`;
+            } else {
+                rightColumn = `<div class="exercise-weight-display"><span class="sets-count">${nextExercise.sets}</span> sets</div>`;
+            }
+            
+            div.innerHTML = `
+                <div class="exercise-left">
+                    <div class="exercise-name-option">${nextExercise.name}</div>
+                    <div class="exercise-details">${details}</div>
+                </div>
+                <div class="exercise-right">
+                    ${rightColumn}
+                </div>
+            `;
+            
+            previewContainer.appendChild(div);
+            previewContainer.style.display = 'block';
+        }
+
+        function hideNextExercisePreview() {
+            document.getElementById('next-exercise-preview').style.display = 'none';
+        }
+
+        function skipToNextExercise() {
+            // Stop current timer and beeping
+            stopTimer();
+            
+            // Move to next exercise
+            const workout = workoutData.workouts[selectedWorkoutId];
+            const nextExerciseIndex = currentExerciseIndex + 1;
+            
+            if (nextExerciseIndex < workout.exercises.length) {
+                startExercise(nextExerciseIndex);
+            } else {
+                // No more exercises, back to exercise selection
+                backToExerciseSelection();
             }
         }
         
@@ -1131,6 +1231,9 @@
             // Stop any active timers and pulsing
             stopTimer();
             stopPulsing();
+            
+            // Hide next exercise preview
+            hideNextExercisePreview();
             
             // Clear current exercise state
             currentSession = null;
@@ -2404,6 +2507,9 @@
             currentSet = 0;
             currentReps = 0;
             
+            // Hide next exercise preview when starting new exercise
+            hideNextExercisePreview();
+            
             showWorkoutScreen();
             displayCurrentExercise();
         }
@@ -2499,6 +2605,9 @@
                 // Exercise is complete - mark it as completed
                 completedExercises.add(currentExerciseIndex);
                 document.getElementById('next-exercise-btn').style.display = 'block';
+                
+                // Show next exercise preview during final rest
+                showNextExercisePreview();
             }
         }
         
@@ -2587,7 +2696,8 @@
                 if (exercise && currentSet < exercise.sets - 1) {
                     document.getElementById('next-set-btn').style.display = 'block';
                 } else if (exercise) {
-                    // Exercise is complete after this set
+                    // Exercise is complete after this set - mark it as completed
+                    completedExercises.add(currentExerciseIndex);
                     document.getElementById('next-exercise-btn').style.display = 'block';
                 }
             } else {
@@ -2605,7 +2715,7 @@
                     const timerDisplay = document.getElementById('timer-display');
                     timerDisplay.classList.add('timer-expired');
                     console.log('Added timer-expired class:', timerDisplay.className);
-                    playBeepSound();
+                    startContinuousBeeping();
                     
                     // Stop the interval but keep timer visible with pulsing
                     if (timer) {
@@ -2640,8 +2750,8 @@
             completeSetBtn.onclick = () => completeSet();
             document.getElementById('complete-set-btn').style.display = 'block';
             
-            // Update status text
-            document.getElementById('set-info').textContent = `Set complete! Click to finish`;
+            // Update status text - no message needed for isometric exercises
+            document.getElementById('set-info').textContent = ``;
         }
         
         function updateTimerDisplay() {
@@ -2656,6 +2766,10 @@
                 clearInterval(timer);
                 timer = null;
             }
+            
+            // Stop continuous beeping
+            stopBeeping();
+            
             document.getElementById('timer-section').style.display = 'none';
             
             // Remove pulsing animation
