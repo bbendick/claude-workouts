@@ -626,6 +626,13 @@
             background: #1976D2;
         }
         
+        .complete-set-btn:disabled, .next-set-btn:disabled, .next-exercise-btn:disabled, .finish-btn:disabled {
+            background: #ccc;
+            color: #888;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
         .back-btn {
             background: #666;
             margin-bottom: 20px;
@@ -2595,12 +2602,16 @@
             // Hide the complete set button
             document.getElementById('complete-set-btn').style.display = 'none';
             
-            // Start rest timer
-            startRestTimer(exercise.restTime);
-            
-            // Show appropriate next action button
+            // Show appropriate next action button immediately (but disabled)
             if (currentSet < exercise.sets - 1) {
-                document.getElementById('next-set-btn').style.display = 'block';
+                const nextSetBtn = document.getElementById('next-set-btn');
+                nextSetBtn.style.display = 'block';
+                nextSetBtn.disabled = true;
+                
+                // Enable button after 2 seconds
+                setTimeout(() => {
+                    nextSetBtn.disabled = false;
+                }, 2000);
             } else {
                 // Exercise is complete - mark it as completed
                 completedExercises.add(currentExerciseIndex);
@@ -2609,6 +2620,9 @@
                 // Show next exercise preview during final rest
                 showNextExercisePreview();
             }
+            
+            // Start rest timer
+            startRestTimer(exercise.restTime);
         }
         
         
