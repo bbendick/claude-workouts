@@ -82,6 +82,70 @@
             color: #fff;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
         }
+
+        .quick-timer-btn {
+            background: none;
+            border: 1px solid #666;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-left: 70px;
+	    margin-top: 2px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            vertical-align: top;
+        }
+
+        .quick-timer-btn:hover {
+            color: #fff;
+            border-color: #888;
+        }
+
+        .quick-timer-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .quick-timer-modal-content {
+            background-color: #2d2d2d;
+            padding: 30px;
+            border-radius: 12px;
+            min-width: 300px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .quick-timer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .quick-timer-option {
+            font-size: 20px;
+            padding: 20px;
+        }
+
+        .quick-timer-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a1a;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
         
         .setup-screen, .workout-selection, .exercise-selection, .workout-screen {
             display: none;
@@ -346,7 +410,7 @@
         }
         
         .btn-secondary {
-            background: #666;
+            background: #2196F3;
             color: white;
             border: none;
             padding: 15px 30px;
@@ -672,6 +736,7 @@
         <div class="header">
             <h1>Gym Tracker 
                 <button class="edit-mode-btn" id="edit-mode-btn" onclick="toggleEditMode()">Edit</button>
+                <button class="quick-timer-btn" id="quick-timer-btn" onclick="showQuickTimerModal()" title="Quick Timer">⏳</button>
                 <button class="settings-btn" id="settings-btn" onclick="showSetup()" title="GitHub Settings" style="display: none;">⚙️</button>
             </h1>
         </div>
@@ -867,6 +932,31 @@
                 <div id="next-exercise-preview" style="display: none;">
                     <div style="margin: 20px 0 10px 0; color: #ccc; font-size: 1.1rem;">Next Exercise:</div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Timer Modal -->
+    <div class="quick-timer-modal" id="quick-timer-modal" style="display: none;">
+        <div class="quick-timer-modal-content">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #fff;">Quick Timer</h2>
+            <div class="quick-timer-buttons">
+                <button class="btn-secondary quick-timer-option" onclick="startQuickTimer(30)">30 Seconds</button>
+                <button class="btn-secondary quick-timer-option" onclick="startQuickTimer(60)">60 Seconds</button>
+            </div>
+            <button class="btn-secondary" onclick="hideQuickTimerModal()" style="margin-top: 20px; width: 100%;">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Quick Timer Full Screen Overlay -->
+    <div class="quick-timer-overlay" id="quick-timer-overlay" style="display: none;">
+        <div class="container">
+            <button class="btn complete-set-btn" id="quick-timer-close-btn-overlay" onclick="stopQuickTimer()">
+                Close
+            </button>
+            <div class="timer">
+                <div class="timer-display" id="quick-timer-display">00:00</div>
+                <div class="timer-label" id="quick-timer-label">Quick Timer</div>
             </div>
         </div>
     </div>
@@ -2792,6 +2882,107 @@
         
         function stopPulsing() {
             document.getElementById('timer-display').classList.remove('timer-expired');
+        }
+
+        // Quick Timer functionality
+        let quickTimerActive = false;
+
+        function showQuickTimerModal() {
+            const modal = document.getElementById('quick-timer-modal');
+            modal.style.display = 'flex';
+            
+            // Allow closing by clicking outside the modal content
+            modal.onclick = function(event) {
+                if (event.target === modal) {
+                    hideQuickTimerModal();
+                }
+            };
+            
+            // Add keyboard support for closing modal
+            document.addEventListener('keydown', handleQuickTimerKeydown);
+        }
+
+        function handleQuickTimerKeydown(event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('quick-timer-modal');
+                if (modal.style.display === 'flex') {
+                    hideQuickTimerModal();
+                } else if (quickTimerActive) {
+                    stopQuickTimer();
+                }
+            }
+        }
+
+        function hideQuickTimerModal() {
+            document.getElementById('quick-timer-modal').style.display = 'none';
+            // Clean up event listener
+            document.removeEventListener('keydown', handleQuickTimerKeydown);
+        }
+
+        function startQuickTimer(seconds) {
+            hideQuickTimerModal();
+            quickTimerActive = true;
+            
+            // Use separate timer state for quick timer
+            timerSeconds = seconds;
+            
+            // Show the full-screen overlay
+            const overlay = document.getElementById('quick-timer-overlay');
+            const timerDisplay = document.getElementById('quick-timer-display');
+            const timerLabel = document.getElementById('quick-timer-label');
+            
+            timerLabel.textContent = 'Quick Timer';
+            overlay.style.display = 'flex';
+            
+            updateQuickTimerDisplay();
+            
+            timer = setInterval(() => {
+                timerSeconds--;
+                updateQuickTimerDisplay();
+                
+                if (timerSeconds <= 0) {
+                    // Timer expired - trigger effects
+                    timerDisplay.classList.add('timer-expired');
+                    startContinuousBeeping();
+                    
+                    // Stop the interval but keep timer visible with pulsing
+                    if (timer) {
+                        clearInterval(timer);
+                        timer = null;
+                    }
+                    
+                    // Update display to show 00:00
+                    timerDisplay.textContent = '00:00';
+                }
+            }, 1000);
+        }
+
+        function updateQuickTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('quick-timer-display').textContent = display;
+        }
+
+        function stopQuickTimer() {
+            if (!quickTimerActive) return;
+            
+            quickTimerActive = false;
+            
+            // Stop timer
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+            
+            // Stop continuous beeping
+            stopBeeping();
+            
+            // Hide the overlay
+            document.getElementById('quick-timer-overlay').style.display = 'none';
+            
+            // Remove pulsing animation
+            document.getElementById('quick-timer-display').classList.remove('timer-expired');
         }
         
         function showOfflineOption() {
